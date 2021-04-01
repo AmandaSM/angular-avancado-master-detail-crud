@@ -43,7 +43,7 @@ export class CategoryService {
   }
 
   update(category: Category): Observable<Category> {
-    const url = '${this.apiPath}/${category.id}';
+    const url = `${this.apiPath}/${category.id}`;
     return this.http.post(this.apiPath, category).pipe(
       catchError(this.handleError),
       map(() => category)//in memory database the post dont return nothing
@@ -51,8 +51,8 @@ export class CategoryService {
   }
 
   delete(id: number): Observable<any> {
-    const url = '${this.apiPath}/${id}';
-  
+    const url =  `${this.apiPath}/${id}`;
+  console.log(url);
     return this.http.delete(url).pipe(
       catchError(this.handleError),
       map(() => null)
