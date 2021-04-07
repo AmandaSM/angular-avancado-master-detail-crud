@@ -28,6 +28,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   ) { }
 
   ngOnInit(): void {
+    
     this.setCurrentAction();//action executing
     this.buildCategoryForm();//construir form
     this.loadCategory();//carregar novamente a lista de categorias
@@ -69,7 +70,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
   private loadCategory() {
     if (this.currentAction == "edit") {
-      
+
       this.route.paramMap.pipe(
         switchMap(params => this.categoryService.getById(+params.get("id")))//take from url/route the value of id 
       )
