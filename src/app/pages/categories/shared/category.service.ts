@@ -26,8 +26,8 @@ export class CategoryService {
   }
 
   getById(id: number): Observable<Category> {
-    const url = '${this.apiPath}/${id}';
-
+    const url = `${this.apiPath}/${id}`;
+    
     return this.http.get(url).pipe(
       catchError(this.handleError),
       map(this.jsonDataToCategory)
@@ -43,16 +43,18 @@ export class CategoryService {
   }
 
   update(category: Category): Observable<Category> {
+
     const url = `${this.apiPath}/${category.id}`;
-    return this.http.post(this.apiPath, category).pipe(
+
+    return this.http.put(url, category).pipe(
       catchError(this.handleError),
       map(() => category)//in memory database the post dont return nothing
     )
   }
 
   delete(id: number): Observable<any> {
-    const url =  `${this.apiPath}/${id}`;
-  console.log(url);
+    const url = `${this.apiPath}/${id}`;
+    console.log(url);
     return this.http.delete(url).pipe(
       catchError(this.handleError),
       map(() => null)
@@ -71,6 +73,8 @@ export class CategoryService {
     return jsonData as Category;
   }
   private handleError(error: any): Observable<any> {
+    console.log("api",this.apiPath);
+
     console.log("ERROR NA REQUISIÇÃO => ", error);
     return throwError(error);
   }
