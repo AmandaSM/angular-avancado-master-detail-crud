@@ -16,7 +16,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   currentAction: string; //edit or create
   categoryForm: FormGroup;
   pageTitle: string;
-  serverErrorMensages: string[] = null;
+  serverErrorMessages: string[] = null;
   submittingForm: boolean = false;
   category: Category = new Category();
 
@@ -28,7 +28,7 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
   ) { }
 
   ngOnInit(): void {
-    
+
     this.setCurrentAction();//action executing
     this.buildCategoryForm();//construir form
     this.loadCategory();//carregar novamente a lista de categorias
@@ -128,14 +128,14 @@ export class CategoryFormComponent implements OnInit, AfterContentChecked {
 
   private actionsForError(error) {
 
-    toastr.error("Ocorreu um erro ao processar a sua solicitação");
+    toastr.error('Ocorreu um erro ao processar a sua solicitação, <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-emoji-dizzy-fill ml-2" viewBox="0 0 16 16">    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM4.146 5.146a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 1 1 .708.708l-.647.646.647.646a.5.5 0 1 1-.708.708L5.5 7.207l-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708zm5 0a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 1 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 0-.708zM8 13a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/>  </svg>');
     this.submittingForm = false;
 
     if (error.status === 422) {//error when server can´t save date
-      this.serverErrorMensages = JSON.parse(error._body).errors; // return [strings]
+      this.serverErrorMessages = JSON.parse(error._body).errors; // return [strings]
     }else{
       //conection server error
-      this.serverErrorMensages = ["Falha na comunicação com o servidor. Por favor, tente novamente mais tarde."]
+      this.serverErrorMessages = ["Falha na comunicação com o servidor. Por favor, tente novamente mais tarde."]
     }
 
   }
