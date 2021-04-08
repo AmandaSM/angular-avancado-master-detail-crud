@@ -158,7 +158,9 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
   }
 
   private createEntry() {
+
     const entry: Entry = Object.assign(new Entry(), this.entryForm.value);//take date of form and create a new Entry
+
     this.entryService.create(entry)
       .subscribe(
         entry => this.actionsForSucess(entry),
