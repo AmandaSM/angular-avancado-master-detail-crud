@@ -10,6 +10,8 @@ import { element } from 'protractor';
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class EntryService {
 
   private apiPath: string = "api/entries";
