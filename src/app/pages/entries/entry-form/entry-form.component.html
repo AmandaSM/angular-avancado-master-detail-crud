@@ -49,7 +49,7 @@
 
                     <select name="type" id="type" formControlName="type" class="form-control">
 
-                        <option *ngFor="let option of typeOptions" [value]="option.value">{{option.text}}</option>
+                        <option *ngFor="let option of typeOptions" [ngValue]="option.value">{{option.text}}</option>
 
                     </select>
 
