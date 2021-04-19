@@ -16,24 +16,32 @@ export class EntryService extends BaseResourceService<Entry>{
   /*
     Don't need import CategoryService if you are not using in-memomory-database  
   */
-  constructor( protected injector: Injector, private categoryService: CategoryService) { 
+  constructor(protected injector: Injector, private categoryService: CategoryService) {
 
-      super("api/entries", injector,Entry.fromJson)
+    super("api/entries", injector, Entry.fromJson)
   }
 
 
   create(entry: Entry): Observable<Entry> {
+    return this.setCategoryAndSendToServe(entry, super.create.bind(this))
+  }
 
+  update(entry: Entry): Observable<Entry> {
+
+    return this.setCategoryAndSendToServe(entry, super.update.bind(this))
+
+  }
+
+  private setCategoryAndSendToServe(entry: Entry, sendFn: any):Observable<any> {
     return this.categoryService.getById(entry.categoryId).pipe(
-      flatMap(category => {       
-
+      flatMap(category => {
         entry.category = category;
+        return sendFn(entry)
+      }),
+      catchError(this.handleError)
+    );
 
-       return super.create(entry);
-
-      })
-    )
-
+    //#region OBS
     /*in memory - database limitation 
     
       [ entry.category ]
@@ -54,50 +62,7 @@ export class EntryService extends BaseResourceService<Entry>{
         )
       ]
     */
-  }
-
-  update(entry: Entry): Observable<Entry> {
-   
-    return this.categoryService.getById(entry.categoryId).pipe(
-      flatMap(category => {
-
-        entry.category = category;
-
-       return super.update(entry);
-
-      })
-    )
-    
-    /* 
-    Just these code work in a real API
-      [
-        return this.http.put(url, entry).pipe(
-          catchError(this.handleError)        
-        )        
-      ]
-    */
-  }
-
-  //protected METHODS
-
-  protected jsonDataToResources(jsonData: any[]): Entry[] {
-
-    console.log(jsonData[0] as Entry);
-    console.log(Object.assign(new Entry(), jsonData[0]));
-
-    const entries: Entry[] = [];
-
-    jsonData.forEach(element => {
-      const entry: Entry =Entry.fromJson(element);
-
-      entries.push(entry);
-    })
-
-    return entries;
-  }
-
-  protected jsonDataToResource(jsonData: any): Entry {
-    return Entry.fromJson(jsonData);
+   //#endregion
   }
 
 }
