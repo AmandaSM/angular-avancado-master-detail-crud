@@ -6,9 +6,13 @@ import { Injector } from "@angular/core";
 
 export abstract class BaseResourceService<T extends BaseResourceModel>{
 
-protected http:HttpClient;
+    protected http: HttpClient;
 
-    constructor(protected apiPath: string, protected injector:Injector) {
+    constructor(
+        protected apiPath: string,
+        protected injector: Injector,
+        protected jsonDataToResourceFn: (jsonData:any)=>T 
+        ) {
 
         this.http = injector.get(HttpClient);//Injector get an instancie
     }
@@ -18,7 +22,7 @@ protected http:HttpClient;
 
         return this.http.get(this.apiPath).pipe(
             catchError(this.handleError),
-            map(this.jsonDataToResources)//return api
+            map(this.jsonDataToResources.bind(this))//return api
         )
 
     }
@@ -28,14 +32,14 @@ protected http:HttpClient;
 
         return this.http.get(url).pipe(
             catchError(this.handleError),
-            map(this.jsonDataToResource)
+            map(this.jsonDataToResources.bind(this))
         )
     }
 
     create(resource: T): Observable<T> {
         return this.http.post(this.apiPath, resource).pipe(
             catchError(this.handleError),
-            map(this.jsonDataToResource)
+            map(this.jsonDataToResources.bind(this))
         )
 
     }
@@ -45,17 +49,20 @@ protected http:HttpClient;
         const url = `${this.apiPath}/${resource.id}`;
 
         return this.http.put(url, resource).pipe(
-            catchError(this.handleError),
-            map(() => resource)//in memory database the post dont return nothing
+            map(() => resource),//in memory database the post dont return nothing
+            catchError(this.handleError)
         )
     }
 
     delete(id: number): Observable<any> {
         const url = `${this.apiPath}/${id}`;
+
         console.log(url);
+
         return this.http.delete(url).pipe(
-            catchError(this.handleError),
-            map(() => null)
+            map(() => null),
+            catchError(this.handleError)
+            
         )
     }
 
@@ -63,12 +70,14 @@ protected http:HttpClient;
 
     protected jsonDataToResources(jsonData: any[]): T[] {
         const resources: T[] = [];
-        jsonData.forEach(element => resources.push(element as T));
+        jsonData.forEach(
+            element => resources.push(this.jsonDataToResourceFn(element))
+        );
         return resources;
     }
 
     protected jsonDataToResource(jsonData: any): T {
-        return jsonData as T;
+        return this.jsonDataToResourceFn(jsonData);
     }
 
     protected handleError(error: any): Observable<any> {

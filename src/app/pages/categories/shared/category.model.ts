@@ -8,4 +8,8 @@ export class Category extends BaseResourceModel{
  ){
      super();//chama consturor
  }
+ static fromJson(jsonData: any):Category{
+    return Object.assign(new Category(),jsonData);//take date of form and create a new Entry
+}
+
 }
