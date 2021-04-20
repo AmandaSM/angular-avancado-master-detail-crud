@@ -1,8 +1,10 @@
 import { BaseResourceModel } from "../models/base-resource.model";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable, throwError } from 'rxjs';
-import { map, catchError, flatMap } from "rxjs/operators";
+
 import { Injector } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from "rxjs/operators";
 
 export abstract class BaseResourceService<T extends BaseResourceModel>{
 
@@ -20,9 +22,9 @@ export abstract class BaseResourceService<T extends BaseResourceModel>{
 
     getAll(): Observable<T[]> {
 
-        return this.http.get(this.apiPath).pipe(
-            catchError(this.handleError),
-            map(this.jsonDataToResources.bind(this))//return api
+        return this.http.get(this.apiPath).pipe(          
+            map(this.jsonDataToResources.bind(this)),//return api
+            catchError(this.handleError)
         )
 
     }
@@ -31,15 +33,15 @@ export abstract class BaseResourceService<T extends BaseResourceModel>{
         const url = `${this.apiPath}/${id}`;
 
         return this.http.get(url).pipe(
-            catchError(this.handleError),
-            map(this.jsonDataToResources.bind(this))
+            map(this.jsonDataToResource.bind(this)),
+            catchError(this.handleError)
         )
     }
 
     create(resource: T): Observable<T> {
         return this.http.post(this.apiPath, resource).pipe(
-            catchError(this.handleError),
-            map(this.jsonDataToResources.bind(this))
+            map(this.jsonDataToResource.bind(this)),
+            catchError(this.handleError)
         )
 
     }
@@ -66,6 +68,9 @@ export abstract class BaseResourceService<T extends BaseResourceModel>{
         )
     }
 
+
+
+
     //PTOTECTED METHODS
 
     protected jsonDataToResources(jsonData: any[]): T[] {
@@ -81,7 +86,6 @@ export abstract class BaseResourceService<T extends BaseResourceModel>{
     }
 
     protected handleError(error: any): Observable<any> {
-        console.log("api", this.apiPath);
 
         console.log("ERROR NA REQUISIÇÃO => ", error);
         return throwError(error);
