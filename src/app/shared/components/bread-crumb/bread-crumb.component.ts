@@ -13,6 +13,7 @@ interface BreadCrumbItem {
 export class BreadCrumbComponent implements OnInit {
 
   @Input() itens: Array<BreadCrumbItem> = [];
+  
   constructor() { }
 
   ngOnInit(): void {
